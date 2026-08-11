@@ -1,4 +1,4 @@
-// app.js - Main application logic (wired to real StayingAPI search)
+// app.js - Main application logic (wired to real StayingAPI search via proxy)
 
 let deferredPrompt = null;
 const installBtn = document.getElementById('install-btn');
@@ -67,18 +67,27 @@ function renderDeals(deals) {
     resultsSection.style.display = 'block';
 }
 
-function showLoading() {
+function showLoading(estimatedSeconds = 60) {
     const container = document.getElementById('deals-container');
     const resultsSection = document.getElementById('results-section');
     if (!container || !resultsSection) return;
+    const estimatedMin = Math.ceil(estimatedSeconds / 60);
     container.innerHTML = `
         <div class="loading-state">
             <div class="spinner"></div>
             <p>Searching Booking.com, Airbnb, Vrbo and Google Hotels...</p>
-            <p class="loading-note">Live searches can take up to a minute the first time.</p>
+            <p class="loading-note" id="loading-progress">Estimated time: about ${estimatedMin} minute${estimatedMin > 1 ? 's' : ''}. Please keep this tab open.</p>
         </div>
     `;
     resultsSection.style.display = 'block';
+}
+
+function updateLoadingProgress(elapsedSec, maxSec) {
+    const el = document.getElementById('loading-progress');
+    if (!el) return;
+    const remaining = Math.max(maxSec - elapsedSec, 0);
+    const remainingMin = Math.ceil(remaining / 60);
+    el.textContent = `Still searching... about ${remainingMin} minute${remainingMin > 1 ? 's' : ''} remaining. Please keep this tab open.`;
 }
 
 function showError(message) {
@@ -96,7 +105,7 @@ async function performSearch() {
     const query = searchInput.value.trim();
     if (!query) return;
 
-    showLoading();
+    showLoading(60);
     document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
 
     try {
@@ -105,7 +114,10 @@ async function performSearch() {
         const checkIn = checkInEl?.value || null;
         const checkOut = checkOutEl?.value || null;
 
-        const results = await window.HotelSearch.searchHotels(query, checkIn, checkOut, 2, 1);
+        const results = await window.HotelSearch.searchHotels(
+            query, checkIn, checkOut, 2, 1,
+            (elapsedSec, maxSec) => updateLoadingProgress(elapsedSec, maxSec)
+        );
         renderDeals(results);
     } catch (error) {
         console.error('Search error:', error);
@@ -120,4 +132,4 @@ if (searchBtn && searchInput) {
     });
 }
 
-console.log('App initialized - connected to real StayingAPI search');
+console.log('App initialized - connected to real StayingAPI search via proxy');

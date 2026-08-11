@@ -24,11 +24,7 @@ body {
     background: var(--bg-light);
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
 .header {
     background: var(--white);
@@ -46,7 +42,6 @@ body {
 }
 
 .logo { font-size: 1.5rem; font-weight: 700; }
-
 .lang-switcher { display: flex; gap: 8px; }
 
 .lang-btn {
@@ -119,12 +114,7 @@ body {
 .suggestion-text { flex: 1; font-size: 0.95rem; }
 .suggestion-flag { font-size: 1.2rem; }
 
-.date-row {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-}
+.date-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
 
 .date-field {
     display: flex;
@@ -252,12 +242,7 @@ body {
     cursor: pointer;
 }
 
-.footer {
-    background: var(--text-dark);
-    color: var(--white);
-    padding: 30px 0;
-    text-align: center;
-}
+.footer { background: var(--text-dark); color: var(--white); padding: 30px 0; text-align: center; }
 .affiliate-disclosure { font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 8px; }
 
 @media (max-width: 768px) {

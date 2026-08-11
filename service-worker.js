@@ -1,4 +1,4 @@
-const CACHE_NAME = 'traveldeal-v2';
+const CACHE_NAME = 'traveldeal-v3';
 const urlsToCache = [
     '/', '/index.html', '/css/style.css',
     '/js/i18n.js', '/js/app.js', '/js/hotel-search.js', '/js/location-autocomplete.js',
@@ -20,7 +20,9 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-    if (event.request.url.includes('api.stayingapi.com') || event.request.url.includes('nominatim.openstreetmap.org')) {
+    if (event.request.url.includes('workers.dev') ||
+        event.request.url.includes('api.stayingapi.com') ||
+        event.request.url.includes('nominatim.openstreetmap.org')) {
         return;
     }
     event.respondWith(
