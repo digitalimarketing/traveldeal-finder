@@ -9,17 +9,6 @@ A trilingual (English, Italian, Persian) Progressive Web App for finding hotel d
 - 📱 PWA - install on any device
 - 💵 Built-in affiliate monetization
 
-## Quick Start
-
-1. Convert `assets/icon.svg` to PNG (192x192 and 512x512)
-2. Get affiliate IDs from Travelpayouts.com
-3. Deploy to GitHub Pages
-4. Share and earn!
-
-## Revenue
-
-With 1,000 users/month = ~€15 passive income
-With 100,000 users/month = ~€1,500 passive income
 
 ## Files
 
@@ -31,10 +20,5 @@ With 100,000 users/month = ~€1,500 passive income
 - `js/app.js` - Main logic
 - `js/hotel-search.js` - Affiliate integration
 
-## Deploy
-
-1. Upload to GitHub
-2. Settings > Pages > Enable
-3. Done!
 
 Full guide: DEPLOYMENT.md
