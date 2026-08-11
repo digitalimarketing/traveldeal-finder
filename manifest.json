@@ -1,25 +1,15 @@
 {
   "name": "TravelDeal Finder",
   "short_name": "TravelDeal",
-  "description": "Find the best hotel deals across multiple platforms - English, Italian, Persian",
+  "description": "Find the best hotel deals worldwide - English, Italian, Persian",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#FFD700",
   "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "assets/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "categories": ["travel", "lifestyle", "utilities"],
   "lang": "en",

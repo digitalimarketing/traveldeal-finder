@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Find the best hotel deals across multiple platforms">
+    <meta name="description" content="Find the best hotel deals worldwide across Booking.com, Airbnb, Vrbo, and Google Hotels">
     <meta name="theme-color" content="#FFD700">
     <title>TravelDeal Finder</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="assets/icon-192.png">
-    <link rel="apple-touch-icon" href="assets/icon-192.png">
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <h1 class="logo">🏨 TravelDeal Finder</h1>
+            <h1 class="logo">TravelDeal Finder</h1>
             <div class="lang-switcher">
-                <button class="lang-btn active" data-lang="en">🇬🇧 EN</button>
-                <button class="lang-btn" data-lang="it">🇮🇹 IT</button>
-                <button class="lang-btn" data-lang="fa">🇮🇷 FA</button>
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="it">IT</button>
+                <button class="lang-btn" data-lang="fa">FA</button>
             </div>
         </div>
     </header>
@@ -26,33 +25,28 @@
     <main class="main">
         <section class="hero">
             <div class="container">
-                <h2 data-i18n="hero.title">Find the Best Hotel Deals</h2>
-                <p data-i18n="hero.subtitle">Compare prices across Booking.com, Airbnb, Expedia, and direct hotel websites</p>
+                <h2 data-i18n="hero.title">Find the Best Hotel Deals Worldwide</h2>
+                <p data-i18n="hero.subtitle">Compare live prices across Booking.com, Airbnb, Vrbo, and Google Hotels</p>
 
-                <div class="search-box">
-                    <input type="text" id="hotel-search" class="search-input" data-i18n-placeholder="search.placeholder" placeholder="Enter hotel name or destination...">
-                    <button id="search-btn" class="search-btn" data-i18n="search.button">Search</button>
-                </div>
-            </div>
-        </section>
+                <div class="search-panel">
+                    <div class="search-input-wrapper" id="search-input-wrapper">
+                        <input type="text" id="hotel-search" class="search-input"
+                               data-i18n-placeholder="search.placeholder"
+                               placeholder="Type a city or country, e.g. Milan, Italy"
+                               autocomplete="off">
+                        <div id="location-dropdown" class="location-dropdown"></div>
+                    </div>
 
-        <section class="features">
-            <div class="container">
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">💰</div>
-                        <h3 data-i18n="features.compare.title">Compare Prices</h3>
-                        <p data-i18n="features.compare.desc">View deals side by side across platforms</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🤝</div>
-                        <h3 data-i18n="features.direct.title">Direct Booking</h3>
-                        <p data-i18n="features.direct.desc">Book directly and skip extra fees</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🎉</div>
-                        <h3 data-i18n="features.deals.title">Exclusive Deals</h3>
-                        <p data-i18n="features.deals.desc">Access negotiated rates just for you</p>
+                    <div class="date-row">
+                        <div class="date-field">
+                            <label for="checkin-date" data-i18n="search.checkin">Check-in</label>
+                            <input type="date" id="checkin-date" class="date-input">
+                        </div>
+                        <div class="date-field">
+                            <label for="checkout-date" data-i18n="search.checkout">Check-out</label>
+                            <input type="date" id="checkout-date" class="date-input">
+                        </div>
+                        <button id="search-btn" class="search-btn" data-i18n="search.button">Search</button>
                     </div>
                 </div>
             </div>
@@ -68,7 +62,7 @@
         <section class="cta">
             <div class="container">
                 <h2 data-i18n="cta.title">Ready to Save on Your Next Trip?</h2>
-                <button id="install-btn" class="install-btn" data-i18n="cta.button">Install App</button>
+                <button id="install-btn" class="install-btn" data-i18n="cta.button" style="display:none;">Install App</button>
             </div>
         </section>
     </main>
@@ -83,7 +77,8 @@
     </footer>
 
     <script src="js/i18n.js"></script>
-    <script src="js/app.js"></script>
     <script src="js/hotel-search.js"></script>
+    <script src="js/location-autocomplete.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+// app.js - Main application logic (wired to real StayingAPI search)
+
 let deferredPrompt = null;
 const installBtn = document.getElementById('install-btn');
 
@@ -20,99 +22,102 @@ if (installBtn) {
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js')
-        .then(registration => console.log('ServiceWorker registered'))
-        .catch(err => console.log('ServiceWorker failed: ', err));
+        .then(() => console.log('ServiceWorker registered'))
+        .catch(err => console.log('ServiceWorker failed:', err));
 }
-
-const sampleDeals = [
-    {
-        id: 1,
-        title: "Grand Hotel Milano",
-        location: "Milan, Italy",
-        price: 120,
-        originalPrice: 180,
-        image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400",
-        platforms: ["booking", "direct"],
-        directLink: "https://booking.com"
-    },
-    {
-        id: 2,
-        title: "Rome Luxury Suites",
-        location: "Rome, Italy",
-        price: 95,
-        originalPrice: 140,
-        image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400",
-        platforms: ["airbnb", "expedia"],
-        directLink: "https://airbnb.com"
-    },
-    {
-        id: 3,
-        title: "Venice Canal View",
-        location: "Venice, Italy",
-        price: 150,
-        originalPrice: 220,
-        image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400",
-        platforms: ["booking", "direct"],
-        directLink: "https://booking.com"
-    }
-];
 
 function renderDeals(deals) {
     const container = document.getElementById('deals-container');
     const resultsSection = document.getElementById('results-section');
-
     if (!container || !resultsSection) return;
 
-    container.innerHTML = '';
+    if (!deals.length) {
+        container.innerHTML = `<p class="no-results">No properties found. Try a different city or country.</p>`;
+        resultsSection.style.display = 'block';
+        return;
+    }
 
-    deals.forEach(deal => {
-        const card = document.createElement('div');
-        card.className = 'deal-card';
+    container.innerHTML = deals.map(deal => {
+        const ratingText = deal.rating != null
+            ? `Rating: ${deal.rating}/${deal.ratingScale} (${deal.reviews} reviews)`
+            : 'No rating yet';
 
-        const platformsHtml = deal.platforms.map(p => {
-            const names = { 'booking': 'Booking.com', 'airbnb': 'Airbnb', 'expedia': 'Expedia', 'direct': 'Direct' };
-            return `<span class="platform-tag">${names[p] || p}</span>`;
-        }).join('');
-
-        const viewDealText = translations[currentLang]['button.viewDeal'] || 'View Deal';
-
-        card.innerHTML = `
-            <img src="${deal.image}" alt="${deal.title}" class="deal-image">
-            <div class="deal-info">
-                <h4 class="deal-title">${deal.title}</h4>
-                <p style="color: #666; margin-bottom: 10px;">${deal.location}</p>
-                <div class="deal-price">
-                    <span class="price-current">€${deal.price}</span>
-                    <span class="price-original">€${deal.originalPrice}</span>
+        return `
+            <div class="deal-card">
+                <img src="${deal.image}" alt="${deal.title}" class="deal-image" loading="lazy"
+                     onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400'">
+                <div class="deal-info">
+                    <h4 class="deal-title">${deal.title}</h4>
+                    <p class="deal-location">${deal.location}</p>
+                    <p class="deal-rating">${ratingText}</p>
+                    <div class="deal-price">
+                        <span class="price-current">${deal.priceLabel}</span>
+                    </div>
+                    <div class="deal-platforms">
+                        <span class="platform-tag">${deal.platformName}</span>
+                    </div>
+                    <button class="deal-btn" onclick="window.HotelSearch.trackAffiliateClick('${deal.id}','${deal.platform}',${deal.price || 0}); window.open('${deal.directLink}', '_blank')">
+                        View on ${deal.platformName}
+                    </button>
                 </div>
-                <div class="deal-platforms">${platformsHtml}</div>
-                <button class="deal-btn" onclick="window.open('${deal.directLink}', '_blank')">
-                    ${viewDealText}
-                </button>
             </div>
         `;
+    }).join('');
 
-        container.appendChild(card);
-    });
+    resultsSection.style.display = 'block';
+}
 
+function showLoading() {
+    const container = document.getElementById('deals-container');
+    const resultsSection = document.getElementById('results-section');
+    if (!container || !resultsSection) return;
+    container.innerHTML = `
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Searching Booking.com, Airbnb, Vrbo and Google Hotels...</p>
+            <p class="loading-note">Live searches can take up to a minute the first time.</p>
+        </div>
+    `;
+    resultsSection.style.display = 'block';
+}
+
+function showError(message) {
+    const container = document.getElementById('deals-container');
+    const resultsSection = document.getElementById('results-section');
+    if (!container || !resultsSection) return;
+    container.innerHTML = `<p class="error-state">Error: ${message}</p>`;
     resultsSection.style.display = 'block';
 }
 
 const searchBtn = document.getElementById('search-btn');
 const searchInput = document.getElementById('hotel-search');
 
-if (searchBtn && searchInput) {
-    searchBtn.addEventListener('click', () => {
-        const query = searchInput.value.trim();
-        if (query) {
-            renderDeals(sampleDeals);
-            document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
-        }
-    });
+async function performSearch() {
+    const query = searchInput.value.trim();
+    if (!query) return;
 
+    showLoading();
+    document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+
+    try {
+        const checkInEl = document.getElementById('checkin-date');
+        const checkOutEl = document.getElementById('checkout-date');
+        const checkIn = checkInEl?.value || null;
+        const checkOut = checkOutEl?.value || null;
+
+        const results = await window.HotelSearch.searchHotels(query, checkIn, checkOut, 2, 1);
+        renderDeals(results);
+    } catch (error) {
+        console.error('Search error:', error);
+        showError(error.message || 'Something went wrong. Please try again.');
+    }
+}
+
+if (searchBtn && searchInput) {
+    searchBtn.addEventListener('click', performSearch);
     searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') searchBtn.click();
+        if (e.key === 'Enter') performSearch();
     });
 }
 
-console.log('TravelDeal Finder initialized');
+console.log('App initialized - connected to real StayingAPI search');
